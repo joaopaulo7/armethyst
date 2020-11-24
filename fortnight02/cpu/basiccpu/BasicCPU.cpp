@@ -234,67 +234,18 @@ int BasicCPU::decodeDataProcReg() {
 	//		que aparece na linha 43 de isummation.S e no endereço 0x68
 	//		de txt_isummation.o.txt.
 	
-		unsigned int n, d;
-	int imm;
-	
-	/* Add/subtract (immediate) (pp. 233-234)
-		This section describes the encoding of the Add/subtract (immediate)
-		instruction class. The encodings in this section are decoded from
-		Data Processing -- Immediate on page C4-232.
-	*/
+    unsigned int n, d, m;
+    
 	switch (IR & 0xFF000000)
 	{
-		case 0x8B000000:
-			//1 1 0 ADD (shifted) - 64-bit variant on page C6-1199
-			
-			if (IR & 0x00C0000) return 1; // sh = 1 não implementado
-			
-			// ler A e B
-			n = (IR & 0x000003E0) >> 5;
-			if (n == 31) {
-				A = SP;
-			} else {
-				A = getX(n); // 64-bit variant
-			}
-			imm = (IR & 0x001F0000) >> 16;
-			B = imm;
-			
-			// registrador destino
-			d = (IR & 0x0000001F);
-			if (d == 31) {
-				Rd = &SP;
-			} else {
-				Rd = &(R[d]);
-			}
-			
-			// atribuir ALUctrl
-			ALUctrl = ALUctrlFlag::ADD;
-			
-			// atribuir MEMctrl
-			MEMctrl = MEMctrlFlag::MEM_NONE;
-			
-			// atribuir WBctrl
-			WBctrl = WBctrlFlag::RegWrite;
-			
-			// atribuir MemtoReg
-			MemtoReg = false;
-			
-			return 0;
         case 0x0B000000:
-        //1 1 0 ADD (shifted) - 21-bit variant on page C6-1199
         
-            if (IR & 0x00C0000) return 1; // sh = 1 não implementado
-            
 			// ler A e B
 			n = (IR & 0x000003E0) >> 5;
-			if (n == 31) {
-				A = SP;
-			} else {
-				A = getX(n); // 64-bit variant
-			}
+			A = getX(n); 
             
-			imm = (IR & 0x001F0000) >> 16;
-			B = imm;
+			m = (IR & 0x001F0000) >> 16;
+			B = getX(m);
 			
 			// registrador destino
 			d = (IR & 0x0000001F);
