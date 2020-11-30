@@ -236,7 +236,7 @@ int BasicCPU::decodeDataProcReg() {
 	
     unsigned int n, d, m;
     
-	switch (IR & 0xFF000000)
+	switch (IR & 0x7F200000)
 	{
         case 0x0B000000:
         
