@@ -6,11 +6,11 @@
 
     (PT) armethyst - Um simulador ARM simples escrito em C++ para o ensino de
     Arquitetura de Computadores. Software livre licenciado pela MIT License
-    (veja a licenÃ§a, em inglÃªs, abaixo).
+    (veja a licença, em inglês, abaixo).
 
     (EN) MIT LICENSE:
 
-    Copyright 2020 AndrÃ© Vital SaÃºde
+    Copyright 2020 André Vital Saúde
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -32,36 +32,17 @@
 
    ----------------------------------------------------------------------------
 */
-#include "SimpleMemory.h"
 
-using namespace std;
+#pragma once
 
-class SimpleMemoryTest : public SimpleMemory
+#include "config.h"
+#include "Memory.h"
+#include "Processor.h"
+
+class Factory
 {
-public:
-	enum MemAccessType {MAT_NONE, MAT_READ32, MAT_WRITE32, MAT_READ64, MAT_WRITE64};
-
-	SimpleMemoryTest(int size);
-	~SimpleMemoryTest();
-		
-	void relocateManual();
-	void writeBinaryAsTextELF (string basename);
-	
-	MemAccessType getLastDataMemAccess();
-	void resetLastDataMemAccess();
-	
-	/*
-	 * Logs dos mÃ©todos da superclasse.
-	 */
-	unsigned int readInstruction32(unsigned long address);
-	int readData32(unsigned long address);
-	long readData64(unsigned long address);
-	void writeData32(unsigned long address, int value);
-	void writeData64(unsigned long address, long value);
-
-private:
-	MemAccessType lastDataMemAccess;
-	ofstream memLogStream;
-	
+	public:		
+		static Memory* createMemory();
+		static Processor* createProcessor(Memory* memory);
 };
 

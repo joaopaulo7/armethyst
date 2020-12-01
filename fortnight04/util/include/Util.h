@@ -6,11 +6,11 @@
 
     (PT) armethyst - Um simulador ARM simples escrito em C++ para o ensino de
     Arquitetura de Computadores. Software livre licenciado pela MIT License
-    (veja a licença, em inglês, abaixo).
+    (veja a licenÃ§a, em inglÃªs, abaixo).
 
     (EN) MIT LICENSE:
 
-    Copyright 2020 André Vital Saúde
+    Copyright 2020 AndrÃ© Vital SaÃºde
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -33,51 +33,35 @@
    ----------------------------------------------------------------------------
 */
 
-#pragma once
+#include <cstdint>
 
-#include "Memory.h"
-#include <string>
-#include <fstream>
-
-using namespace std;
-
-class SimpleMemory : public Memory
+class Util
 {
-public:
-	SimpleMemory(int size);
-	~SimpleMemory();
+	public:
 
-	void loadBinary(std::string filename);
-	void writeBinaryAsText (std::string basename);
-
-	/**
-	 * Lê uma instrução de 32 bits considerando um endereçamento em bytes.
-	 */
-	unsigned int readInstruction32(unsigned long address);
-
-	/**
-	 * Lê um dado de 32 bits considerando um endereçamento em bytes.
-	 */
-	int readData32(unsigned long address);
-
-	/**
-	 * Lê um dado de 64 bits considerando um endereçamento em bytes.
-	 */
-	long readData64(unsigned long address);
+		/**
+		 * Look at a 32-bit floating point value as a 64-bit unsigned
+		 * integer without conversion (the binary code remains unchanged
+		 * and the number is extended to 64 bits with 32 zeros left).
+		 */
+		static uint64_t floatAsUint64Low(float value);
+		
+		/**
+		 * Look at the lower 32 bits of a 64-bit unsigned integer as a
+		 * 32-bit floating point value without conversion (the binary
+		 * code remains unchanged).
+		 */
+		static float uint64LowAsFloat(uint64_t value);
 	
-	/**
-	 * Escreve um dado (value) de 32 bits considerando um endereçamento em bytes.
-	 */
-	void writeData32(unsigned long address, int value);
-
-	/**
-	 * Escreve um dado (value) de 64 bits considerando um endereçamento em bytes.
-	 */
-	void writeData64(unsigned long address, long value);
-
-protected:
-	char* data;        //memory data
-	unsigned short fileSize;    //size of the loaded binary file
-
+		/**
+		 * Look at a 64-bit floating point value as a 64-bit unsigned
+		 * integer without conversion (the binary code remains unchanged).
+		 */
+		static uint64_t doubleAsUint64(double value);
+		
+		/**
+		 * Look at a 64-bit unsigned integer value as a 64-bit floating
+		 * point without conversion (the binary code remains unchanged).
+		 */
+		static double uint64AsDouble(uint64_t value);
 };
-
