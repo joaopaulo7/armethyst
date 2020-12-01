@@ -127,7 +127,9 @@ int BasicCPU::ID()
 		// implementar o GRUPO A SEGUIR
 		//
 		// x111 Data Processing -- Scalar Floating-Point and Advanced SIMD on page C4-288
-
+        case 0x1E000000:
+            return BasicCPU::decodeDataProcFloat();
+            break;
 		
 		// ATIVIDADE FUTURA
 		// implementar os DOIS GRUPOS A SEGUIR
@@ -347,6 +349,8 @@ int BasicCPU::decodeDataProcFloat() {
 			
 			return 0;
 
+        case 0x1E202800:
+            return 0;
 		default:
 			// instrução não implementada
 			return 1;
@@ -382,6 +386,9 @@ int BasicCPU::EXI()
 		case ALUctrlFlag::SUB:
 			ALUout = A - B;
 			return 0;
+        case ALUctrlFlag::ADD:
+            ALUout = A + B;
+            return 0;
 		default:
 			// Controle não implementado
 			return 1;

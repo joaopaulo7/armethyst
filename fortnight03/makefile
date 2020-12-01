@@ -7,7 +7,7 @@ testcmd:
 # global
 #
 CC=g++
-CFLAGS=-std=c++14
+CFLAGS=-std=c++17
 
 IDIR=include
 ODIR=./obj
