@@ -128,6 +128,7 @@ int BasicCPU::ID()
 		//
 		// x111 Data Processing -- Scalar Floating-Point and Advanced SIMD on page C4-288
         case 0x1E000000:
+        case 0x0E000000:
             return BasicCPU::decodeDataProcFloat();
             break;
 		
