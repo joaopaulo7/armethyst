@@ -452,7 +452,7 @@ void testID(BasicCPUTest* cpu,
 	long B = cpu->getB();
 	cout << "	A=0x" << A << "; B=0x" << B << endl;
 	cout << "Expected: A=0x" << xpctdA << "; B=0x" << xpctdB << endl;
-	if ((A != xpctdA) || (B != xpctdB)){
+	if (((int)A != xpctdA) || ((int)B != xpctdB)){
 		cout << "ID() FAILED on registers reading!" << endl;
 		cout << "Exit..." << endl;
 		exit(1);
