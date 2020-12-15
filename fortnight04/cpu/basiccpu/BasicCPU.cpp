@@ -211,14 +211,14 @@ int BasicCPU::decodeDataProcImm() {
 			return 0;
             
         case 0x71000000:
-            //CMP
+            //CMP (immediate) 
 			if (IR & 0x80000000) return 1;
 			// ler A e B
 			n = (IR & 0x000003E0) >> 5;
 			if (n == 31) {
 				A = SP;
 			} else {
-				A = getW(n); //ARRUMA
+				A = getW(n); 
 			}
 			imm = (IR & 0x003FFC00) >> 10;
 			B = imm;
@@ -234,11 +234,6 @@ int BasicCPU::decodeDataProcImm() {
 			
 			// atribuir MemtoReg
 			MemtoReg = false;
-            
-			if(A < B)
-                N_flag = true;
-            else if(A == B)
-                Z_flag = true;
                 
 			return 0;
             
@@ -309,13 +304,12 @@ int BasicCPU::decodeBranches() {
 			// atribuir MEMctrl
 			//estágio de acesso a memoria
 			MEMctrl = MEMctrlFlag::MEM_NONE; //none pq nao acesso a memoria
-			// atribuir WBctrl
-			//estagio de write back
+
             switch(IR & 0x0000000F)
             {
                 case 0x0000000d:
                     if(N_flag or Z_flag)
-                        WBctrl = WBctrlFlag::RegWrite; //onde eu vou escrever a informação, que é no registrador, por isso o "RegWrite"
+                        WBctrl = WBctrlFlag::RegWrite; //se passar no teste, muda o valor de PC
                     else
                         WBctrl = WBctrlFlag::WB_NONE;
             }
@@ -764,6 +758,10 @@ int BasicCPU::EXI()
 	{
 		case ALUctrlFlag::SUB:
 			ALUout = A - B;
+			if(ALUout & 0x80000000)
+                N_flag = true;
+            else if(ALUout == 0)
+                Z_flag = true;
 			return 0;
         case ALUctrlFlag::ADD:
             ALUout = A + B;
