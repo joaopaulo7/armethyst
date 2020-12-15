@@ -218,7 +218,7 @@ int BasicCPU::decodeDataProcImm() {
 			if (n == 31) {
 				A = SP;
 			} else {
-				A = 7;//getW(n); //ARRUMA
+				A = getW(n); //ARRUMA
 			}
 			imm = (IR & 0x003FFC00) >> 10;
 			B = imm;
