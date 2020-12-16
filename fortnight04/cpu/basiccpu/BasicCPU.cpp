@@ -258,6 +258,7 @@ int BasicCPU::decodeBranches() {
 	//declaração do imm26 valor imm6 na página C6-722
 	//switch para pegar o branch
     int32_t imm26;
+    int32_t imm19;
 	switch (IR & 0xFC000000) { //zera tudo que eu não quero deixando só os que quero testar
 		//000101 unconditional branch to a label on page C6-722 - verificação
 		case 0x14000000: //aplico a mascara pra ver se o que eu peguei é o que eu esperava
@@ -288,9 +289,9 @@ int BasicCPU::decodeBranches() {
             
         case 0x54000000:
 			//B.cond
-			imm26 = (IR & 0x00FFFFE0);
-            B = ((int64_t)(imm26<<8)) >>11;
-            
+			imm19 = (IR & 0x00FFFFE0);
+            B = ((int64_t)(imm19 << 8)) >> 11; //move 13bits para a conversão e volta 13-2 para voltar.
+            //8 pois 5 já são movidos pelo condicional e da definição da instrução. 
 			//declara reg a
 			A = PC; //salvo o endereço da instrução (PC) em A
 			//declara reg d
