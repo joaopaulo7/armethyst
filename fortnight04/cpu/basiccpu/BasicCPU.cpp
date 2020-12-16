@@ -759,11 +759,11 @@ int BasicCPU::EXI()
 	{
 		case ALUctrlFlag::SUB:
 			ALUout = A - B;
-			if(ALUout & 0x80000000)
-                N_flag = true;
-            else if(ALUout == 0)
-                Z_flag = true;
-			return 0;
+                N_flag = (ALUout & 0x80000000); //já que ALUout é sem sinal, checa o primeiro bit (sign se for com sinal).
+                Z_flag = (ALUout == 0);
+                V_flag = (A & 0x80000000 and  B & 0x80000000 and not(N_flag));
+                C_flag = V_flag;
+            return 0;
         case ALUctrlFlag::ADD:
             ALUout = A + B;
             return 0;
