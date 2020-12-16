@@ -1,4 +1,22 @@
 /* ----------------------------------------------------------------------------
+* |GCC117 - Arquitetura de ComputadoresI|
+* Semestre 2020/2
+* 
+* #Trabalho Final#
+* 
+* Grupo:
+* >Gabriel Salgado de Mello - 201710894 - 10A
+* >Jean Paulo de Alvarenga - 201621424 - 10A
+* >João Paulo Paiva Lima - 201920242 - 10A 
+* >Miguel Piedade Veiga - 201920707 - 10A
+*
+* -- Instrução apresentada: 
+*		ble .L3 (linha 53 do arquivo isummation.S)
+*       54FFFE0D
+* ----------------------------------------------------------------------------
+*/
+
+/* ----------------------------------------------------------------------------
 
     (EN) armethyst - A simple ARM Simulator written in C++ for Computer Architecture
     teaching purposes. Free software licensed under the MIT License (see license
@@ -115,6 +133,7 @@ int BasicCPU::ID()
 		case 0x12000000: // x = 1
 			return decodeDataProcImm();
 			break;
+            
 		// x101 Data Processing -- Register on page C4-278
 		case 0x0A000000: 
 		case 0x1A000000:
@@ -123,7 +142,7 @@ int BasicCPU::ID()
 		
 		// TODO
 		// implementar o GRUPO A SEGUIR
-		//
+		// 
 		// x111 Data Processing -- Scalar Floating-Point and Advanced SIMD on page C4-288
         case 0x1E000000:
         case 0x0E000000:
@@ -134,13 +153,14 @@ int BasicCPU::ID()
 		// implementar os DOIS GRUPOS A SEGUIR
 		//
 		// 101x Loads and Stores on page C4-237
-		// 101x Branches, Exception Generating and System instructions on page C4-237
         case 0x08000000:
         case 0x0C000000:
         case 0x1C000000:
         case 0x18000000:
             return BasicCPU::decodeLoadStore();
             break;
+        
+        // 101x Branches, Exception Generating and System instructions on page C4-237
         case 0x0B000000:
         case 0x16000000:
         case 0x14000000:
@@ -258,11 +278,13 @@ int BasicCPU::decodeBranches() {
 	//declaração do imm26 valor imm6 na página C6-722
 	//switch para pegar o branch
     int32_t imm26;
+    
+    //captura a parte de 19bits do branch condicional
     int32_t imm19;
-	switch (IR & 0xFC000000) { //zera tudo que eu não quero deixando só os que quero testar
-		//000101 unconditional branch to a label on page C6-722 - verificação
-		case 0x14000000: //aplico a mascara pra ver se o que eu peguei é o que eu esperava
-			//exercício
+	switch (IR & 0xFC000000) { 
+		case 0x14000000: 
+            //000101 UNCONDITIONAL BRANCH to a label on page C6-722 - verificação
+            
 			// eliminação dos zeros à esquerda, casting explícito para uint64_t e retorno dos 26 bits à posição original, mas com 2 bits 0 à direita
             imm26 = (IR & 0x03FFFFFF);
             B = ((int64_t)(imm26 << 6)) >> 4;
@@ -289,13 +311,19 @@ int BasicCPU::decodeBranches() {
             
         case 0x54000000:
 			//B.cond
+            
+            //captura o imediato de 19bits.
 			imm19 = (IR & 0x00FFFFE0);
-            B = ((int64_t)(imm19 << 8)) >> 11; //move 13bits para a conversão e volta 13-2 para voltar.
+            //move 13bits para a conversão e volta 13-2 = 11 para voltar.
+            B = ((int64_t)(imm19 << 8)) >> 11;
             //8 pois 5 já são movidos pelo condicional e da definição da instrução. 
-			//declara reg a
-			A = PC; //salvo o endereço da instrução (PC) em A
+
+            //lê PC em A 
+			A = PC; 
 			//declara reg d
-			Rd = &PC; // salvo o endereço da instrução (PC) no registrador de destino
+            
+            //PC será o destino, já que mudará a ordem da execução.
+			Rd = &PC; 
 			
 			// Atribuição das Flags
 
@@ -306,12 +334,16 @@ int BasicCPU::decodeBranches() {
 			//estágio de acesso a memoria
 			MEMctrl = MEMctrlFlag::MEM_NONE; //none pq nao acesso a memoria
 
+            //checa o valor dos bits da condição
             switch(IR & 0x0000000F)
             {
-                case 0x0000000d:
+                //se for D(hex), esntão é ser for menor ou igual a zero, muda o PC.
+                case 0x0000000D:
                     if(N_flag or Z_flag)
-                        WBctrl = WBctrlFlag::RegWrite; //se passar no teste, muda o valor de PC
+                        //se passar no teste, muda o valor de PC.
+                        WBctrl = WBctrlFlag::RegWrite;
                     else
+                        //se passar no teste, não muda o valor de PC.
                         WBctrl = WBctrlFlag::WB_NONE;
             }
 			// atribuir MemtoReg
@@ -326,8 +358,11 @@ int BasicCPU::decodeBranches() {
             
 			//declara reg a
             d = (IR & 0x000003E0) >>5;
+            //captura o valor de A
 			A = getX(d); 
             
+            //O branch mudará a ordem da leitura,
+            // então PC será alterado.
 			Rd = &PC; 
             
 			// Atribuição das Flags
@@ -346,6 +381,7 @@ int BasicCPU::decodeBranches() {
 			MemtoReg=false;// como a info não vem da memoria é falso
 			return 0;
         default:
+            //não implementado.
             return 1;
     }
 	return 1;
@@ -362,8 +398,10 @@ int BasicCPU::decodeLoadStore() {
 	uint64_t n,d;
 	// instrução não implementada
 	switch (IR & 0xFFC00000) { 
-		case 0xB9800000://LDRSW C6.2.131 Immediate (Unsigned offset) 913
-			// como é escrita em 64 bits, não há problema em decodificar
+		case 0xB9800000:
+            //LDRSW C6.2.131 Immediate (Unsigned offset) 913
+			
+            // como é escrita em 64 bits, não há problema em decodificar
 			n = (IR & 0x000003e0) >> 5;
 			if (n == 31) {
 				A = SP;
@@ -384,8 +422,11 @@ int BasicCPU::decodeLoadStore() {
 			MemtoReg=true;
 			
 			return 0;
-		case 0xB9400000://LDR C6.2.119 Immediate (Unsigned offset) 886 
-		//32 bits
+		case 0xB9400000:
+            //LDR C6.2.119 Immediate (Unsigned offset) 886 
+            //32 bits
+        
+            //Lê os valores de A e B.
 			n = (IR & 0x000003E0) >> 5;
 			if (n == 31) {
 				A = SP;
@@ -410,10 +451,13 @@ int BasicCPU::decodeLoadStore() {
 			WBctrl = WBctrlFlag::RegWrite;
 			// atribuir MemtoReg
 			MemtoReg=true;
-			
 			return 0;
-		case 0xB9000000://STR C6.2.257 Unsigned offset 1135
+            
+		case 0xB9000000:
+            //STR C6.2.257 Unsigned offset 1135
 			//size = 10, 32 bit
+            
+            //Lê os valores de A e B.
 			n = (IR & 0x000003E0) >> 5;
 			if (n == 31) {
 				A = SP;
@@ -443,7 +487,10 @@ int BasicCPU::decodeLoadStore() {
 			return 0;
 	}
 	switch (IR & 0xFFE0FC00) {
-		case 0xB8607800://LDR (Register) C6.2.121 891
+		case 0xB8607800:
+            //LDR (Register) C6.2.121 891
+        
+            //Lê A e B
 			n = (IR & 0x000003E0) >> 5;
 			if (n == 31) {
 				A = SP;
@@ -495,10 +542,10 @@ int BasicCPU::decodeDataProcReg() {
 	
 	switch (IR & 0xFF200000)
 	{
-		
-		// C6.2.5 ADD (shifted register) p. C6-688
 		case 0x8B000000:
 		case 0x0B000000:
+            // C6.2.5 ADD (shifted register) p. C6-688
+            
 			// sf == 1 not implemented (64 bits)
 			if (IR & 0x80000000) return 1;
 		
@@ -567,10 +614,11 @@ int BasicCPU::decodeDataProcFloat() {
 		case 0x1E203800:
 			//C7.2.159 FSUB (scalar) on page C7-1615
 			
-			// implementado apenas ftype='00'
-			if (IR & 0x00C00000) return 1;
-
-			fpOp = FPOpFlag::FP_REG_32;
+			//Checa se é 32 ou 64 bits
+			if (IR & 0x00C00000) 
+                fpOp = FPOpFlag::FP_REG_64;
+            else
+                fpOp = FPOpFlag::FP_REG_32;
 			
 			// ler A e B
 			n = (IR & 0x000003E0) >> 5;
@@ -599,7 +647,7 @@ int BasicCPU::decodeDataProcFloat() {
         case 0x1E202800:
 			//FADD (scalar)
             
-			// implementado apenas ftype='00'
+			//Checa se é 32 ou 64 bits
 			if (IR & 0x00C00000) 
                 fpOp = FPOpFlag::FP_REG_64;
             else
@@ -633,7 +681,7 @@ int BasicCPU::decodeDataProcFloat() {
         case 0x1E201800:
             //FDIV (scalar)
             
-			// implementado apenas ftype='00'
+			//Checa se é 32 ou 64 bits
 			if (IR & 0x00C00000) 
                 fpOp = FPOpFlag::FP_REG_64;
             else
@@ -665,7 +713,7 @@ int BasicCPU::decodeDataProcFloat() {
         case 0x1E200800:
         //FMUL (scalar)
             
-			// implementado apenas ftype='00'
+			//Checa se é 32 ou 64 bits
 			if (IR & 0x00C00000) 
                 fpOp = FPOpFlag::FP_REG_64;
             else
@@ -696,18 +744,23 @@ int BasicCPU::decodeDataProcFloat() {
 			return 0;
 	}
     
+    //caso especial:
     switch(IR & 0xFF3FFA00)
     {
         case 0x1E214000:
             //FNEG (scalar)
+            
+            //Checa se é 32 ou 64 bits
 			if (IR & 0x00C00000) 
                 fpOp = FPOpFlag::FP_REG_64;
             else
                 fpOp = FPOpFlag::FP_REG_32;
-			// ler A e B
-			n = (IR & 0x000003E0) >> 5;
+                
+            //Para negar B, nós subtraímos B de zero, então A será 0.
 			A = 0; 
             
+            // ler B
+            n = (IR & 0x000003E0) >> 5;
 			B = getSasInt(n);
 
 			// registrador destino
@@ -727,7 +780,9 @@ int BasicCPU::decodeDataProcFloat() {
 			MemtoReg = false;
 			
 			return 0;
+            
         default:
+            //instruções não implementadas.
             return 1;
     }
 	// instrução não implementada
@@ -759,9 +814,15 @@ int BasicCPU::EXI()
 	{
 		case ALUctrlFlag::SUB:
 			ALUout = A - B;
-                N_flag = (ALUout & 0x80000000); //já que ALUout é sem sinal, checa o primeiro bit (sign se for com sinal).
+                //já que ALUout é sem sinal, checa o primeiro bit (sign se for com sinal).
+                N_flag = (ALUout & 0x80000000); 
+                //Se ALUout for 0 liga a flag Z.
                 Z_flag = (ALUout == 0);
-                V_flag = (A & 0x80000000 and  B & 0x80000000 and not(N_flag));
+                //Overflow numa subtração ocorre quando um número negativo é tão
+                //negativamete grande que o bit de sinal muda. 
+                //Se A for negativo e B for positivo, A - B deverá ser negativo, senão, houve overflow.
+                V_flag = (A & 0x80000000 and  not(B & 0x80000000) and not(N_flag));
+                //carry ainda não implementado.
                 C_flag = V_flag;
             return 0;
         case ALUctrlFlag::ADD:
@@ -805,15 +866,19 @@ int BasicCPU::EXF()
 		switch (ALUctrl)
 		{
 			case ALUctrlFlag::SUB:
+                //suntração de floats
 				ALUout = Util::floatAsUint64Low(fA - fB);
 				return 0;
 			case ALUctrlFlag::ADD:
+                //soma de floats
 				ALUout = Util::floatAsUint64Low(fA + fB);
 				return 0;
             case ALUctrlFlag::MUL:
+                //multiplicação de floats
 				ALUout = Util::floatAsUint64Low(fA * fB);
                 return 0;
             case ALUctrlFlag::DIV:
+                //divisão de floats
 				ALUout = Util::floatAsUint64Low(fA / fB);
                 return 0;
 			default:
