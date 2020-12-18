@@ -1,13 +1,14 @@
 /* ----------------------------------------------------------------------------
-* |GCC117 - Arquitetura de ComputadoresI|
-* Semestre 2020/2
-* 
 * #Trabalho Final#
+* |GCC117 - Arquitetura de ComputadoresI|
+* UFLA - Universidade Federal de Lavras
+* Semestre 2020/2
+* Prof: André Vital Saúde
 * 
 * Grupo:
 * >Gabriel Salgado de Mello - 201710894 - 10A
 * >Jean Paulo de Alvarenga - 201621424 - 10A
-* >João Paulo Paiva Lima - 201920242 - 10A 
+* >João Paulo Paiva Lima - 201920242 - 10A (Apresentador)
 * >Miguel Piedade Veiga - 201920707 - 10A
 *
 * -- Instrução apresentada: 
@@ -310,11 +311,11 @@ int BasicCPU::decodeBranches() {
 			return 0;
             
         case 0x54000000:
-			//B.cond
+			//B.cond - CONDICIONAL BRANCH
             
             //captura o imediato de 19bits.
 			imm19 = (IR & 0x00FFFFE0);
-            //move 13bits para a conversão e volta 13-2 = 11 para voltar.
+            //move 13bits para completar 32bits e fazer a conversão e 13-2 = 11 para voltar.
             B = ((int64_t)(imm19 << 8)) >> 11;
             //8 pois 5 já são movidos pelo condicional e da definição da instrução. 
 
